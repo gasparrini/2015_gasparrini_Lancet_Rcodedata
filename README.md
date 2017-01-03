@@ -6,7 +6,7 @@
 An examples partly reproducing the results of an analysis of the excess risk attributable to non-optimal outdoot temperature in a multi-country dataset, published in:
 
 
-Gasparrini A, Guo Y, Hashizume M, Lavigne E, Zanobetti A, Schwartz J, Tobias A, Tong S, Rocklöv J, Forsberg B, Leone M, De Sario M, Bell ML, Guo YLL, Wu CF, Kan H, Yi SM, de Sousa Zanotti Stagliorio Coelho M, Saldiva PH, Honda Y, Kim H, Armstrong B. Mortality risk attributable to high and low ambient temperature: a multicountry observational study. *The Lancet*. 2015;**386**(9991):369-375. [[freely available here]](http://www.ag-myresearch.com/2015_gasparrini_lancet.html)
+Gasparrini A, Guo Y, Hashizume M, Lavigne E, Zanobetti A, Schwartz J, Tobias A, Tong S, Rocklöv J, Forsberg B, Leone M, De Sario M, Bell ML, Guo YLL, Wu CF, Kan H, Yi SM, de Sousa Zanotti Stagliorio Coelho M, Saldiva PH, Honda Y, Kim H, Armstrong B. Mortality risk attributable to high and low ambient temperature: a multicountry observational study. *The Lancet*. 2015;**386**(9991):369-375. [[freely available here](http://www.ag-myresearch.com/2015_gasparrini_lancet.html)]
 
 --------------------------------------------------------------------------------
 
