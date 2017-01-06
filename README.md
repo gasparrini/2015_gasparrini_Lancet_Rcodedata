@@ -1,5 +1,5 @@
 
-### Updated R code from Gasparrini et al, Lancet 2015
+### Updated R code and data from Gasparrini Lancet 2015
 
 --------------------------------------------------------------------------------
 
@@ -15,6 +15,6 @@ The code:
   * *regEngWales* stores the daily time series data from 10 locations corresponding to regions of England and Wales in the period 1993--2006
   * *attrdl.R* creates the function for computing the attributable risk measures
   * *attrdl.pdf* is the help page for the function attrdl
-  * the numbered files from *00.prepdata.R* to *05.plots*, reproduce the results of an example with the subset of data
+  * the numbered files from *00.prepdata.R* to *05.plots.R*, reproduce the results of an example with the subset of data
   
 Download as a ZIP file using the green button *Clone or download* above
