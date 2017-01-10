@@ -76,14 +76,10 @@ for(i in seq(dlist)){
     vcov=blup[[i]]$vcov,type="an",dir="forw",cen=mintempcity[i],
     range=c(mintempcity[i],100),sim=T,nsim=nsim)
   
-  # IDENTIFY WHICH OBS HAVE CONTRIBUTED TO THE COMPUTATION
-  # NB: USED TO COMPUTE THE ATTRIBUTABLE FRACTION LATER
-  notna <- !is.na(attrdl(data$tmean,cb,data$death,coef=blup[[i]]$blup,
-    vcov=blup[[i]]$vcov,type="an",dir="forw",tot=F,cen=mintempcity[i]))
-  
-  # STORE THE TOTAL MORTALITY (ACCOUNTING FOR MISSING)
-  totdeathattr[i] <- sum(data$death[notna])
-  totdeathall[i] <- sum(data$death,na.rm=T)
+  # STORE THE DENOMINATOR  OF ATTRIBUTABLE DEATHS
+  # CONSISTENT WITH THE FORWARD DEFINITION
+  # CORRECT DENOMINATOR TO COMPUTE THE ATTRIBUTABLE FRACTION LATER, AS IN attrdl
+  totdeathattr[i] <- sum(rowMeans(Lag(data$death,-(0:lag))),na.rm=T)
 }
 
 ################################################################################
