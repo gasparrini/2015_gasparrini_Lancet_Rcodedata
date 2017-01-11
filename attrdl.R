@@ -1,5 +1,5 @@
 ###
-### (c) Antonio Gasparrini 2015-2016
+### (c) Antonio Gasparrini 2015-2017
 #
 ################################################################################
 # FUNCTION FOR COMPUTING ATTRIBUTABLE MEASURES FROM DLNM
@@ -14,9 +14,9 @@
 #   IT IS RESPONSIBILITY OF THE USER TO CHECK THE RELIABILITY OF THE RESULTS IN
 #   DIFFERENT APPLICATIONS.
 #
-# Version: 30 June 2016
-# AN UPDATED VERSION OF THIS FUNCTION CAN BE FOUND AT www.ag-myresearch.com
-#
+# Version: 11 January 2017
+# AN UPDATED VERSION CAN BE FOUND AT:
+#   https://github.com/gasparrini/2014_gasparrini_BMCmrm_Rcodedata
 #
 ################################################################################
 # SEE THE PDF WITH A DETAILED DOCUMENTATION AT www.ag-myresearch.com
@@ -69,16 +69,19 @@ attrdl <- function(x,basis,cases,model=NULL,coef=NULL,vcov=NULL,type="af",
       stop("dimension of 'x' not compatible with 'basis'")
   }
 #
-  # cases: TRANFORM IN MEAN OF FUTURE CASES IF dir="forw"
+  # NUMBER USED FOR THE CONTRIBUTION AT EACH TIME IN FORWARD TYPE
+  #   - IF cases PROVIDED AS A MATRIX, TAKE THE ROW AVERAGE
+  #   - IF PROVIDED AS A TIME SERIES, COMPUTE THE FORWARD MOVING AVERAGE
+  #   - THIS EXCLUDES MISSING ACCORDINGLY
+  if(NROW(cases)!=NROW(at)) stop("'x' and 'cases' not consistent")
   if(NCOL(cases)>1L) {
     if(dir=="back") stop("'cases' must be a vector if dir='back'")
     if(ncol(cases)!=diff(lag)+1) stop("dimension of 'cases' not compatible")
-    cases <- rowMeans(cases)
+    n <- rowMeans(cases)
   } else {
-    if(dir=="forw") 
-      cases <- rowMeans(as.matrix(tsModel:::Lag(cases,-seq(lag[1],lag[2]))))
+    n <- if(dir=="back") cases else 
+      rowMeans(as.matrix(tsModel:::Lag(cases,-seq(lag[1],lag[2]))))
   }
-  if(length(cases)!=NROW(at)) stop("'x' and 'cases' not consistent")
 #
 ################################################################################
 #
@@ -129,13 +132,18 @@ attrdl <- function(x,basis,cases,model=NULL,coef=NULL,vcov=NULL,type="af",
 #
   # COMPUTE AF AND AN 
   af <- 1-exp(-rowSums(as.matrix(Xpredall%*%coef)))
-  an <- af*cases
+  an <- af*n
 #
-  # TOTAL (ACCOUNTING FOR MISSING)
+  # TOTAL
+  #   - SELECT NON-MISSING OBS CONTRIBUTING TO COMPUTATION
+  #   - DERIVE TOTAL AF
+  #   - COMPUTE TOTAL AN WITH ADJUSTED DENOMINATOR (OBSERVED TOTAL NUMBER)
   if(tot) {
     isna <- is.na(an)
-    af <- sum(an[!isna])/sum(cases[!isna])
-    an <- af*sum(cases,na.rm=T)
+    af <- sum(an[!isna])/sum(n[!isna])
+    den <- if(NCOL(cases)==1) sum(cases,na.rm=TRUE) else 
+      sum(rowMeans(cases,na.rm=TRUE),na.rm=TRUE)
+    an <- af*den
   }
 #
 ################################################################################
@@ -156,7 +164,7 @@ attrdl <- function(x,basis,cases,model=NULL,coef=NULL,vcov=NULL,type="af",
       ani <- (1-exp(-drop(Xpredall%*%coefi)))*cases
       sum(ani[!is.na(ani)])/sum(cases[!is.na(ani)])
     })
-    ansim <- afsim*sum(cases,na.rm=T)
+    ansim <- afsim*den
   }
 #
 ################################################################################

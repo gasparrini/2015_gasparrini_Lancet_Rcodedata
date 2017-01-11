@@ -7,10 +7,10 @@
 #
 # This code reproduces the analysis with the subset of data only including UK
 #
-# 10 January 2017
-# * an updated version of this code, (hopefully) compatible with future
-#   versions of the software, is available at the personal website of the
-#   first author (www.ag-myresearch.com)
+# Update: 11 January 2017
+# * an updated version of this code, compatible with future versions of the
+#   software, is available at:
+#   https://github.com/gasparrini/2015_gasparrini_Lancet_Rcodedata
 ################################################################################
 
 ################################################################################
@@ -22,8 +22,8 @@
 source("attrdl.R")
 
 # CREATE THE VECTORS TO STORE THE TOTAL MORTALITY (ACCOUNTING FOR MISSING)
-totdeathattr <- totdeathall <- rep(NA,nrow(cities))
-names(totdeathattr) <- names(totdeathall) <- cities$city
+totdeath <- rep(NA,nrow(cities))
+names(totdeath) <- cities$city
 
 # CREATE THE MATRIX TO STORE THE ATTRIBUTABLE DEATHS
 matsim <- matrix(NA,nrow(cities),3,dimnames=list(cities$city,
@@ -76,10 +76,9 @@ for(i in seq(dlist)){
     vcov=blup[[i]]$vcov,type="an",dir="forw",cen=mintempcity[i],
     range=c(mintempcity[i],100),sim=T,nsim=nsim)
   
-  # STORE THE DENOMINATOR  OF ATTRIBUTABLE DEATHS
-  # CONSISTENT WITH THE FORWARD DEFINITION
+  # STORE THE DENOMINATOR OF ATTRIBUTABLE DEATHS, I.E. TOTAL OBSERVED MORTALITY
   # CORRECT DENOMINATOR TO COMPUTE THE ATTRIBUTABLE FRACTION LATER, AS IN attrdl
-  totdeathattr[i] <- sum(rowMeans(Lag(data$death,-(0:lag))),na.rm=T)
+  totdeath[i] <- sum(data$death,na.rm=T)
 }
 
 ################################################################################
@@ -101,19 +100,19 @@ antothigh <- apply(apply(arraysim,c(2,3),sum),1,quantile,0.975)
 # TOTAL MORTALITY
 
 # BY COUNTRY
-totdeathattrtot <- sum(totdeathattr)
+totdeathtot <- sum(totdeath)
 
 ################################################################################
 # ATTRIBUTABLE FRACTIONS
 
 # CITY-SPECIFIC
-afcity <- ancity/totdeathattr*100
-afcitylow <- ancitylow/totdeathattr*100
-afcityhigh <- ancityhigh/totdeathattr*100
+afcity <- ancity/totdeath*100
+afcitylow <- ancitylow/totdeath*100
+afcityhigh <- ancityhigh/totdeath*100
 
 # TOTAL
-aftot <- antot/totdeathattrtot*100
-aftotlow <- antotlow/totdeathattrtot*100
-aftothigh <- antothigh/totdeathattrtot*100
+aftot <- antot/totdeathtot*100
+aftotlow <- antotlow/totdeathtot*100
+aftothigh <- antothigh/totdeathtot*100
 
 #

@@ -7,10 +7,10 @@
 #
 # This code reproduces the analysis with the subset of data only including UK
 #
-# 10 January 2017
-# * an updated version of this code, (hopefully) compatible with future
-#   versions of the software, is available at the personal website of the
-#   first author (www.ag-myresearch.com)
+# Update: 11 January 2017
+# * an updated version of this code, compatible with future versions of the
+#   software, is available at:
+#   https://github.com/gasparrini/2015_gasparrini_Lancet_Rcodedata
 #############################################################################
 
 ################################################################################
