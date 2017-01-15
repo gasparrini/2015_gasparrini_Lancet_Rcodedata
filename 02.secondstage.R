@@ -1,13 +1,13 @@
 ################################################################################
-# SUPPLEMENTAL MATERIAL of the article:
+# Updated version of the code for the analysis in:
+#
 #   "Mortality risk attributable to high and low ambient temperature:
 #     a multi-country study"
 #   Antonio Gasparrini and collaborators
 #   The Lancet - 2015
+#   http://www.ag-myresearch.com/2015_gasparrini_lancet.html
 #
-# This code reproduces the analysis with the subset of data only including UK
-#
-# Update: 11 January 2017
+# Update: 15 January 2017
 # * an updated version of this code, compatible with future versions of the
 #   software, is available at:
 #   https://github.com/gasparrini/2015_gasparrini_Lancet_Rcodedata
