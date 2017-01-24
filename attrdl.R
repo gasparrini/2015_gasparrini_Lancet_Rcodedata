@@ -14,7 +14,7 @@
 #   IT IS RESPONSIBILITY OF THE USER TO CHECK THE RELIABILITY OF THE RESULTS IN
 #   DIFFERENT APPLICATIONS.
 #
-# Version: 11 January 2017
+# Version: 24 January 2017
 # AN UPDATED VERSION CAN BE FOUND AT:
 #   https://github.com/gasparrini/2014_gasparrini_BMCmrm_Rcodedata
 #
@@ -73,14 +73,17 @@ attrdl <- function(x,basis,cases,model=NULL,coef=NULL,vcov=NULL,type="af",
   #   - IF cases PROVIDED AS A MATRIX, TAKE THE ROW AVERAGE
   #   - IF PROVIDED AS A TIME SERIES, COMPUTE THE FORWARD MOVING AVERAGE
   #   - THIS EXCLUDES MISSING ACCORDINGLY
+  # ALSO COMPUTE THE DENOMINATOR TO BE USED BELOW
   if(NROW(cases)!=NROW(at)) stop("'x' and 'cases' not consistent")
   if(NCOL(cases)>1L) {
     if(dir=="back") stop("'cases' must be a vector if dir='back'")
     if(ncol(cases)!=diff(lag)+1) stop("dimension of 'cases' not compatible")
-    n <- rowMeans(cases)
+    den <- sum(rowMeans(cases,na.rm=TRUE),na.rm=TRUE)
+    cases <- rowMeans(cases)
   } else {
-    n <- if(dir=="back") cases else 
-      rowMeans(as.matrix(tsModel:::Lag(cases,-seq(lag[1],lag[2]))))
+    den <- sum(cases,na.rm=TRUE) 
+    if(dir=="forw") 
+      cases <- rowMeans(as.matrix(tsModel:::Lag(cases,-seq(lag[1],lag[2]))))
   }
 #
 ################################################################################
@@ -131,8 +134,8 @@ attrdl <- function(x,basis,cases,model=NULL,coef=NULL,vcov=NULL,type="af",
 ################################################################################
 #
   # COMPUTE AF AND AN 
-  af <- 1-exp(-rowSums(as.matrix(Xpredall%*%coef)))
-  an <- af*n
+  af <- 1-exp(-drop(as.matrix(Xpredall%*%coef)))
+  an <- af*cases
 #
   # TOTAL
   #   - SELECT NON-MISSING OBS CONTRIBUTING TO COMPUTATION
@@ -140,9 +143,7 @@ attrdl <- function(x,basis,cases,model=NULL,coef=NULL,vcov=NULL,type="af",
   #   - COMPUTE TOTAL AN WITH ADJUSTED DENOMINATOR (OBSERVED TOTAL NUMBER)
   if(tot) {
     isna <- is.na(an)
-    af <- sum(an[!isna])/sum(n[!isna])
-    den <- if(NCOL(cases)==1) sum(cases,na.rm=TRUE) else 
-      sum(rowMeans(cases,na.rm=TRUE),na.rm=TRUE)
+    af <- sum(an[!isna])/sum(cases[!isna])
     an <- af*den
   }
 #
@@ -160,6 +161,8 @@ attrdl <- function(x,basis,cases,model=NULL,coef=NULL,vcov=NULL,type="af",
     X <- matrix(rnorm(length(coef)*nsim),nsim)
     coefsim <- coef + eigen$vectors %*% diag(sqrt(eigen$values),k) %*% t(X)
     # RUN THE LOOP
+    # pre_afsim <- (1 - exp(- Xpredall %*% coefsim)) * cases # a matrix 
+    # afsim <- colSums(pre_afsim, na.rm = TRUE) / sum(cases, na.rm = TRUE)    
     afsim <- apply(coefsim,2, function(coefi) {
       ani <- (1-exp(-drop(Xpredall%*%coefi)))*cases
       sum(ani[!is.na(ani)])/sum(cases[!is.na(ani)])
