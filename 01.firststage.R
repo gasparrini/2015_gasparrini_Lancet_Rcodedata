@@ -49,10 +49,11 @@ for(i in seq(length(dlist))) {
   # RUN THE MODEL AND OBTAIN PREDICTIONS
   # NB: NO CENTERING NEEDED HERE, AS THIS DOES NOT AFFECT COEF-VCOV
   model <- glm(formula,data,family=quasipoisson,na.action="na.exclude")
-  pred <- crosspred(cb,model)
+  cen <- mean(data$tmean,na.rm=T)
+  pred <- crosspred(cb,model,cen=cen)
 
   # REDUCTION TO OVERALL CUMULATIVE
-  red <- crossreduce(cb,model)
+  red <- crossreduce(cb,model,cen=cen)
   coef[i,] <- coef(red)
   vcov[[i]] <- vcov(red)
   
