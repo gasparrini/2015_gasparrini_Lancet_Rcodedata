@@ -25,7 +25,8 @@
 #   - basis: THE CROSS-BASIS COMPUTED FROM x
 #   - cases: THE CASES VECTOR OR (ONLY FOR dir="forw") THE MATRIX OF FUTURE CASES
 #   - model: THE FITTED MODEL
-#   - coef AND vcov: COEF AND VCOV FOR basis IF model IS NOT PROVIDED
+#   - coef, vcov: COEF AND VCOV FOR basis IF model IS NOT PROVIDED
+#   - model.link: LINK FUNCTION IF model IS NOT PROVIDED
 #   - type: EITHER "an" OR "af" FOR ATTRIBUTABLE NUMBER OR FRACTION
 #   - dir: EITHER "back" OR "forw" FOR BACKWARD OR FORWARD PERSPECTIVES
 #   - tot: IF TRUE, THE TOTAL ATTRIBUTABLE RISK IS COMPUTED
@@ -34,8 +35,8 @@
 #   - sim: IF SIMULATION SAMPLES SHOULD BE RETURNED. ONLY FOR tot=TRUE
 #   - nsim: NUMBER OF SIMULATION SAMPLES
 ################################################################################
-attrdl <- function(x,basis,cases,model=NULL,coef=NULL,vcov=NULL,type="af",
-  dir="back",tot=TRUE,cen,range=NULL,sim=FALSE,nsim=5000) {
+attrdl <- function(x,basis,cases,model=NULL,coef=NULL,vcov=NULL,model.link=NULL,
+  type="af",dir="back",tot=TRUE,cen,range=NULL,sim=FALSE,nsim=5000) {
 ################################################################################
 #
   # CHECK VERSION OF THE DLNM PACKAGE
@@ -98,7 +99,8 @@ attrdl <- function(x,basis,cases,model=NULL,coef=NULL,vcov=NULL,type="af",
     coef <- coef[ind]
     vcov <- dlnm:::getvcov(model,model.class)[ind,ind,drop=FALSE]
     model.link <- dlnm:::getlink(model,model.class)
-    if(model.link!="log") stop("'model' must have a log link function")
+    if(!model.link %in% c("log","logit"))
+      stop("'model' must have a log or logit link function")
   }
 #
   # IF REDUCED ESTIMATES ARE PROVIDED
